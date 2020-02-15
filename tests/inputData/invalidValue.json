@@ -3,7 +3,7 @@
     "PlanetIdentifier": "WASP-62 b",
     "TypeFlag": 0,
     "PlanetaryMassJpt": 0.57,
-    "RadiusJpt": 1.39,
+    "RadiusJpt": "50cents",
     "PeriodDays": 4.411953,
     "SemiMajorAxisAU": 0.0567,
     "Eccentricity": 0,
@@ -40,7 +40,7 @@
     "SurfaceTempK": "",
     "AgeGyr": "",
     "DiscoveryMethod": "transit",
-    "DiscoveryYear": 2014,
+    "DiscoveryYear": "re",
     "LastUpdated": "14/02/26",
     "RightAscension": "19 12 56",
     "Declination": "+40 31 15",
@@ -48,7 +48,7 @@
     "HostStarMassSlrMass": 0.97,
     "HostStarRadiusSlrRad": 0.939,
     "HostStarMetallicity": "",
-    "HostStarTempK": 5560,
+    "HostStarTempK": "hi",
     "HostStarAgeGyr": ""
   },
   {
