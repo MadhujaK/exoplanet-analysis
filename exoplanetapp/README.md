@@ -7,7 +7,7 @@ python3 -m venv env
 
 Docker:
 use the Dockerfile to spin up a process with the app
-
+Docker image located on repo -- docker pull maddoc81/exoplanet-app
 
 
 Kubernetes deployment steps:
