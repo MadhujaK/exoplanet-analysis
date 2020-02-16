@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: exoplanetapp
+  namespace: exoplanetapp
+spec:
+  replicas: 1
+  template:
+  metadata:
+    labels:
+    k8s-app: exoplanetapp
+  spec:
+    containers:
+    - name: exoplanetapp
+      image: exoplanet-app:latest
+      imagePullPolicy: "Never"
+      ports:
+      - containerPort: 5000
