@@ -56,3 +56,10 @@ This should output the software output stream on commandline
 
 Timing the current script:
 exoplanet-analysis/tests/time.py is a script added to the repo to time the exoApp.py script total runtime 
+
+Testing for the script:
+unit tests are located in the tests/unittest folder
+to execute the testExo.py file with 3 unit tests included execute:
+
+cd tests/unittest
+python3 -m unittest -v testExo.py

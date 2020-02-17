@@ -16,7 +16,10 @@ class Exoplanet:
     except:
       print("Error while retrieving data from url: "+ url)
       os._exit(1)
-    self.jsonData = r.json()
+    try:
+      self.jsonData = r.json()
+    except:
+      print("Invalid json")
 
   def runLoop(self):
     #json processing loop
@@ -64,8 +67,8 @@ class Exoplanet:
        pass
 
   def getTimeline(self,obj):
-    #store a dictionary of years with count of S, M and L as separate values attached to different keys
-    if (obj["RadiusJpt"] == ''):
+      #store a dictionary of years with count of S, M and L as separate values attached to different keys
+    if (obj["RadiusJpt"] == ''): #should never happen taken care in vaidateValue
       pass
     elif (obj["RadiusJpt"] < 1):
       try:
@@ -73,10 +76,10 @@ class Exoplanet:
       except:
         self.radiusYear[str(obj["DiscoveryYear"])+"S"]=1
     elif (obj["RadiusJpt"] < 2):
-      try:
-        self.radiusYear[str(obj["DiscoveryYear"])+"M"]+=1
-      except:
-        self.radiusYear[str(obj["DiscoveryYear"])+"M"]=1
+    try:
+      self.radiusYear[str(obj["DiscoveryYear"])+"M"]+=1
+    except:
+      self.radiusYear[str(obj["DiscoveryYear"])+"M"]=1
     else:
       try:
         self.radiusYear[str(obj["DiscoveryYear"])+"L"]+=1
@@ -162,4 +165,3 @@ if __name__ == '__main__':
     exoplanet.runLoop()
     exoplanet.organizeTimeline()
     exoplanet.printInfo()
-

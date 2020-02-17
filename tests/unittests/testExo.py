@@ -1,7 +1,10 @@
 import unittest
+import os
+import json
+import requests
 
-class Exoplanet:
-  def __init__(self):
+class TestExoplanet(unittest.TestCase):
+  def setUp(self):
     #initialize variables
     maxStarT= 0
     self.hotStarP = ''
@@ -9,29 +12,43 @@ class Exoplanet:
     self.radiusYear = {}
     self.timeline = {}
     self.jsonData = {}
+    self.radiusJpt = ''
+    self.hostStarTemp = ''
+    self.discoveryYear = ''
 
   def getJson(self):
     #if test arg not given get json data from url
-    url = "https://gist.githubusercontent.com/joelbirchler/66cf8045fcbb6515557347c05d789b4a/raw/9a196385b44d4288431eef74896c0512bad3defe/exop$
+    url = "https://gist.githubusercontent.com/joelbirchler/66cf8045fcbb6515557347c05d789b4a/raw/9a196385b44d4288431eef74896c0512bad3defe/exoplanets"
     try:
       r = requests.get(url)
     except:
       print("Error while retrieving data from url: "+ url)
       os._exit(1)
-    self.jsonData = r.json()
+    try:
+      self.jsonData = r.json()
+    except:
+      print("Invalid json")
+      os._exit()
+    try:
+      self.radiusJpt = self.json["RadiusJpt"]
+      self.discoveryYear = self.json["DiscoveryYear"]
+      self.hotStarTemp = self.json["HotStarTempK"]
+    except:
+      pass
+
 
   def runLoop(self):
     #json processing loop
     self.getJson()
     for obj in self.jsonData:
-      s = exoplanet.getOrphans(obj)
+      s = self.getOrphans(obj)
       if (s=="string"):
         continue
-      exoplanet.getHottestStar(obj)
-      r = exoplanet.validateValues(obj)
+      self.getHottestStar(obj)
+      r = self.validateValues(obj)
       if (r=="string"):
         continue
-      exoplanet.getTimeline(obj)
+      self.getTimeline(obj)
 
   def validateValues(self,obj):
     #if either DiscoveryYear or Radius not present move on to next object
@@ -119,7 +136,29 @@ class Exoplanet:
       print("Timeline: ")
       #sort and print timeline here
       for (year,radii) in sorted(self.timeline.items()):
-$timeline[int(year)][1],self.timeline[int(year)][2]))
+        print("In %s we discovered %s small planets, %s medium planets, and %s large planets" % (year,self.timeline[int(year)][0],timeline[int(year)][1],self.timeline[int(year)][2]))
+
+  def test_starTemp_int(self):
+    self.runLoop()
+    try:
+      self.assertEqual(type(self.hostStarTemp), 'int' , "Star temp is not an integer")
+    except:
+      self.assertEqual(self.hostStarTemp, '', "Star temp is not an integer or empty")
+
+
+  def test_radiusJpt_int(self):
+    self.runLoop()
+    try:
+      self.assertEqual(type(self.radiusJpt), 'int' , "Radius is not an integer")
+    except:
+      self.assertEqual(self.radiusJpt, '', "Radius is not an integer or empty")
+
+  def test_discoverYear_int(self):
+    self.runLoop()
+    try:
+      self.assertEqual(type(self.radiusJpt), 'int' , "Discovery year is not an integer")
+    except:
+      self.assertEqual(self.radiusJpt, '', "Discovery year is not an integer or empty")
 
 
 if __name__ == '__main__':
