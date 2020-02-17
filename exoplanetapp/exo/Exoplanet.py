@@ -20,7 +20,11 @@ class Exoplanet:
     except:
       print("Error while retrieving data from url: "+ url)
       os._exit(1)
-    self.jsonData = r.json()
+    try:
+      self.jsonData = r.json()
+    except:
+      print("Invalid json")
+      os._exit(1)
 
   def runLoop(self):
     #json processing loop

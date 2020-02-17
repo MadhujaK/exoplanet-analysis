@@ -9,17 +9,6 @@ testInput = TestInput()
 
 @app.route("/")
 def index():
-  #parse path for tests
-  parser = argparse.ArgumentParser(description='Processes Exoplanet Data')
-  parser.add_argument('-t', '--test', metavar='file_path', type=str, nargs='+',
-                   help='provide test input json file paths')
-  args = parser.parse_args()
-
-  if (args.test != None):
-    testInput.checkInput(args)
-    testInput.runTestJson(args)
-  #if test argument not given run program to take input from url
-  else:
     exoplanet.runLoop()
     exoplanet.organizeTimeline()
     exoplanet.printInfo()

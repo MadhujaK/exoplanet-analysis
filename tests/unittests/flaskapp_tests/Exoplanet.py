@@ -1,7 +1,11 @@
+import os
+import json
+import requests
+from flask import render_template
 class Exoplanet:
   def __init__(self):
     #initialize variables
-    maxStarT= 0
+    self.maxStarT = 0
     self.hotStarP = ''
     self.noStarPlanets= 0
     self.radiusYear = {}
@@ -20,19 +24,20 @@ class Exoplanet:
       self.jsonData = r.json()
     except:
       print("Invalid json")
+      os._exit(1)
 
   def runLoop(self):
     #json processing loop
     self.getJson()
     for obj in self.jsonData:
-      s = exoplanet.getOrphans(obj)
+      s = self.getOrphans(obj)
       if (s=="string"):
         continue
-      exoplanet.getHottestStar(obj)
-      r = exoplanet.validateValues(obj)
+      self.getHottestStarP(obj)
+      r = self.validateValues(obj)
       if (r=="string"):
         continue
-      exoplanet.getTimeline(obj)
+      self.getTimeline(obj)
 
   def validateValues(self,obj):
     #if either DiscoveryYear or Radius not present move on to next object
@@ -53,22 +58,22 @@ class Exoplanet:
         pass
       return "string"
 
-  def getHottestStar(self,obj):
+  def getHottestStarP(self,obj):
     try:
       #outer try checks if HostStarTemp key is present and integer
       #finds the planet with maximum temperature of host star
-      if (obj["HostStarTempK"] > maxStarT):
-        maxStarT = obj["HostStarTempK"]
+      if (obj["HostStarTempK"] > self.maxStarT):
+        self.maxStarT = obj["HostStarTempK"]
         try:
           self.hotStarP = obj["PlanetIdentifier"]
         except:
-          pass
+          self.hotStarP = "planet was not named"
     except:
-       pass
+       print("Exception in getHottestStarP")
 
   def getTimeline(self,obj):
-      #store a dictionary of years with count of S, M and L as separate values attached to different keys
-    if (obj["RadiusJpt"] == ''): #should never happen taken care in vaidateValue
+    #store a dictionary of years with count of S, M and L as separate values attached to different keys
+    if (obj["RadiusJpt"] == ''):
       pass
     elif (obj["RadiusJpt"] < 1):
       try:
@@ -103,65 +108,30 @@ class Exoplanet:
       self.timeline[int(item[0:4])] = [s,m,l]
 
   def printInfo(self):
-      print("Number of planets without stars:" + str(self.noStarPlanets))
-      print("Hottest Star:" + self.hotStarP)
-      print("Timeline: ")
-      #sort and print timeline here
-      for (year,radii) in sorted(self.timeline.items()):
-        print("In %s we discovered %s small planets, %s medium planets, and %s large planets" % (year,self.timeline[int(year)][0],self.timeline[int(year)][1],self.timeline[int(year)][2]))
+    print("Number of planets without stars:" + str(self.noStarPlanets))
+    print("Hottest Star:" + self.hotStarP)
+    print("Timeline: ")
+    #sort and print timeline here
+    for (year,radii) in sorted(self.timeline.items()):
+      print("In %s we discovered %s small planets, %s medium planets, and %s large planets" % (year,self.timeline[int(year)][0],self.timeline[int(year)][1],self.timeline[int(year)][2]))
 
+  def printOrphans(self):
+    return ("Number of planets without stars: " + str(self.noStarPlanets))
 
-class TestInput(Exoplanet):
-  def __init__(self):
-    maxStarT= 0
-    self.hotStarP = ''
-    self.noStarPlanets= 0
-    self.jsonData = {}
-    self.radiusYear = {}
-    self.timeline = {}
+  def printHotStarP(self):
+    return ("Hottest Star Planet: "+ str(self.hotStarP))
 
-  def checkInput(self,args):
-    ##code for handling invalid json
-    for filePath in args.test:
-      with open(filePath, 'r') as f:
-        try:
-          self.jsonData = json.load(f)
-        except json.JSONDecodeError as j:
-          print("Invalid json")
-          os._exit(1)
+  def printTimeline(self):
+    outputStr = ("<p>Timeline:</p>")
+    for (year,radii) in sorted(self.timeline.items()):
+      outputStr +=("<p>In %s we discovered %s small planets, %s medium planets, and %s large planets.</p>" % (year,self.timeline[int(year)][0],self.timeline[int(year)][1],self.timeline[int(year)][2]))
+    return outputStr
 
-  def runTestJson(self,args):
-    for obj in self.jsonData:
-      s = self.getOrphans(obj)
-      if (s=="string"):
-        continue
-      self.getHottestStar(obj)
-      r = self.validateValues(obj)
-      if (r=="string"):
-        continue
-      self.getTimeline(obj)
-      self.organizeTimeline()
-      self.printInfo()
-
-
-#----Main Program Starts Here ----
-if __name__ == '__main__':
-  import argparse
-  import json
-  import requests
-  import os
-  #parse path for tests
-  parser = argparse.ArgumentParser(description='Processes Exoplanet Data')
-  parser.add_argument('-t', '--test', metavar='file_path', type=str, nargs='+',
-                   help='provide test input json file paths')
-  args = parser.parse_args()
-  exoplanet = Exoplanet()
-  testInput = TestInput()
-  if (args.test != None):
-    testInput.checkInput(args)
-    testInput.runTestJson(args)
-  #if test argument not given run program to take input from url
-  else:
-    exoplanet.runLoop()
-    exoplanet.organizeTimeline()
-    exoplanet.printInfo()
+  #def displayTimeline(self):
+  #  legend = 'Exoplanet Radius Year Timeline'
+  #  labels = []
+  #  values = []
+  #  for (year,radii) in sorted(self.timeline.items()):
+  #    labels.append(str(year))
+  #    values.append(str(self.timeline[int(year)][0]) + "," + str(self.timeline[int(year)][1]) + "," + str(self.timeline[int(year)][2]))
+  #  return render_template('chart.html', values=values, labels=labels, legend=legend)

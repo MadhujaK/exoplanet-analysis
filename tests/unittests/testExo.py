@@ -1,3 +1,4 @@
+##Command line test script
 import unittest
 import os
 import json
@@ -12,9 +13,9 @@ class TestExoplanet(unittest.TestCase):
     self.radiusYear = {}
     self.timeline = {}
     self.jsonData = {}
-    self.radiusJpt = ''
-    self.hostStarTemp = ''
-    self.discoveryYear = ''
+    self.radiusJpt = "test"
+    self.discoveryYear = "test"
+    self.hostStarTemp = "test"
 
   def getJson(self):
     #if test arg not given get json data from url
@@ -28,19 +29,16 @@ class TestExoplanet(unittest.TestCase):
       self.jsonData = r.json()
     except:
       print("Invalid json")
-      os._exit()
-    try:
-      self.radiusJpt = self.json["RadiusJpt"]
-      self.discoveryYear = self.json["DiscoveryYear"]
-      self.hotStarTemp = self.json["HotStarTempK"]
-    except:
-      pass
+      os._exit(1)
 
 
   def runLoop(self):
     #json processing loop
     self.getJson()
     for obj in self.jsonData:
+      self.radiusJpt = obj["RadiusJpt"]
+      self.discoveryYear = obj["DiscoveryYear"]
+      self.hostStarTemp = obj["HostStarTempK"]
       s = self.getOrphans(obj)
       if (s=="string"):
         continue
@@ -56,17 +54,6 @@ class TestExoplanet(unittest.TestCase):
       int(obj["DiscoveryYear"])
       int(obj["RadiusJpt"])
     except:
-      return "string"
-
-  def getOrphans(self,obj):
-    try:
-      int(obj["HostStarTempK"])
-    except:
-      try:
-        if (obj["HostStarTempK"]==""):
-          self.noStarPlanets +=1
-      except:
-        pass
       return "string"
 
   def getOrphans(self,obj):
@@ -141,7 +128,7 @@ class TestExoplanet(unittest.TestCase):
   def test_starTemp_int(self):
     self.runLoop()
     try:
-      self.assertEqual(type(self.hostStarTemp), 'int' , "Star temp is not an integer")
+      self.assertTrue(type(self.hostStarTemp) is int)
     except:
       self.assertEqual(self.hostStarTemp, '', "Star temp is not an integer or empty")
 
@@ -149,16 +136,16 @@ class TestExoplanet(unittest.TestCase):
   def test_radiusJpt_int(self):
     self.runLoop()
     try:
-      self.assertEqual(type(self.radiusJpt), 'int' , "Radius is not an integer")
+      self.assertTrue(type(self.radiusJpt) is float)
     except:
       self.assertEqual(self.radiusJpt, '', "Radius is not an integer or empty")
 
   def test_discoverYear_int(self):
     self.runLoop()
     try:
-      self.assertEqual(type(self.radiusJpt), 'int' , "Discovery year is not an integer")
+      self.assertTrue(type(self.discoveryYear) is int)
     except:
-      self.assertEqual(self.radiusJpt, '', "Discovery year is not an integer or empty")
+      self.assertEqual(self.discoveryYear, '', "Discovery year is not an integer or empty")
 
 
 if __name__ == '__main__':
